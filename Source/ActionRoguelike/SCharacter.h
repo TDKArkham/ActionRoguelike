@@ -34,11 +34,25 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	class USInteractionComponent* InteractionComponent;
+
 	void MoveForward(float Value);
 	void MoveRight(float Value);
+	
 	void PrimaryAttack();
 
-public:
-	UPROPERTY(EditAnywhere)
+	UFUNCTION()
+	void PrimaryAttack_TimeElapsed();
+	
+	void PrimaryInteract();
+
+	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UAnimMontage* AttackAnim;
+	
+public:
+	
 };
