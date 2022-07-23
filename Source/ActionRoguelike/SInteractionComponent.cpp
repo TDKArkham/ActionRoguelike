@@ -3,6 +3,7 @@
 
 #include "SInteractionComponent.h"
 
+#include "DrawDebugHelpers.h"
 #include "SGameplayInterface.h"
 
 
@@ -55,6 +56,7 @@ void USInteractionComponent::PrimaryInteract()
 	AActor* HitActor = Hit.GetActor();
 	if (HitActor)
 	{
+		DrawDebugLine(GetWorld(), EyeLocation, End, FColor::Green, false, 2.0f);
 		if (HitActor->Implements<USGameplayInterface>())
 		{
 			APawn* MyPawn = Cast<APawn>(MyOwner);
