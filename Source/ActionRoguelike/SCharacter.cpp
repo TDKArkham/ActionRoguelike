@@ -3,6 +3,7 @@
 
 #include "SCharacter.h"
 
+#include "DrawDebugHelpers.h"
 #include "SInteractionComponent.h"
 #include "SMagicProjectile.h"
 #include "Camera/CameraComponent.h"
@@ -55,6 +56,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("PrimaryBlackhole", IE_Pressed, this, &ASCharacter::PrimaryBlackhole);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
@@ -82,19 +84,20 @@ void ASCharacter::MoveRight(float Value)
 void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
-	
+
 	const FLatentActionInfo LatentActionInfo(0, FMath::Rand(), TEXT("PrimaryAttack_TimeElapsed"), this);
 	UKismetSystemLibrary::Delay(this, 0.17f, LatentActionInfo);
 
 	//GetWorldTimerManager().SetTimer(TimerHandle_ShootDelay, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.17f);
-	
+
 }
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Shoot!"));
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
+	FVector HitPosition = GetHitLocation();
+	FTransform SpawnTM = FTransform(FRotationMatrix::MakeFromX(HitPosition - HandLocation).Rotator(), HandLocation);
 	FActorSpawnParameters SpawnParam;
 	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnParam.Instigator = this;
@@ -102,6 +105,49 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 	if (ProjectileClass)
 	{
 		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParam);
+	}
+}
+
+void ASCharacter::PrimaryBlackhole()
+{
+	PlayAnimMontage(AttackAnim);
+
+	const FLatentActionInfo LatentActionInfo(0, FMath::Rand(), TEXT("PrimaryBlackhole_TimeElapsed"), this);
+	UKismetSystemLibrary::Delay(this, 0.17f, LatentActionInfo);
+}
+
+void ASCharacter::PrimaryBlackhole_TimeElapsed()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Shoot!"));
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FVector HitPosition = GetHitLocation();
+	FTransform SpawnTM = FTransform(FRotationMatrix::MakeFromX(HitPosition - HandLocation).Rotator(), HandLocation);
+	FActorSpawnParameters SpawnParam;
+	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParam.Instigator = this;
+
+	if (ProjectileClass)
+	{
+		GetWorld()->SpawnActor<AActor>(BlackHoleClass, SpawnTM, SpawnParam);
+	}
+}
+
+FVector ASCharacter::GetHitLocation()
+{
+	FVector Start = CameraComponent->GetComponentLocation();
+	FVector End = CameraComponent->GetComponentRotation().Vector() * 2000.0f + Start;
+	FHitResult Hit;
+	
+	bool bIsHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_WorldStatic);
+	if (bIsHit)
+	{
+		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f);
+		return Hit.ImpactPoint;
+	}
+	else
+	{
+		DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f);
+		return End;
 	}
 }
 

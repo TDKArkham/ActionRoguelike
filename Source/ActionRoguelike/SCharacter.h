@@ -42,17 +42,26 @@ protected:
 	
 	void PrimaryAttack();
 
+	void PrimaryInteract();
+	
 	UFUNCTION()
 	void PrimaryAttack_TimeElapsed();
+
+	void PrimaryBlackhole();
 	
-	void PrimaryInteract();
+	UFUNCTION()
+	void PrimaryBlackhole_TimeElapsed();
 
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> BlackHoleClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 	
-public:
+private:
+	FVector GetHitLocation();
 	
 };
