@@ -4,6 +4,7 @@
 #include "SCharacter.h"
 
 #include "DrawDebugHelpers.h"
+#include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
 #include "SMagicProjectile.h"
 #include "Camera/CameraComponent.h"
@@ -25,6 +26,7 @@ ASCharacter::ASCharacter()
 	CameraComponent->SetupAttachment(CameraBoom);
 
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>(TEXT("InteractionComponent"));
+	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>(TEXT("AttributeComponent"));
 
 	bUseControllerRotationYaw = false;
 

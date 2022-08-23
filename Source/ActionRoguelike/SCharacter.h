@@ -37,6 +37,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class USInteractionComponent* InteractionComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class USAttributeComponent* AttributeComponent;
+
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	
