@@ -55,6 +55,9 @@ protected:
 	UFUNCTION()
 	void PrimaryBlackhole_TimeElapsed();
 
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, class USAttributeComponent* OwnerComponent, float NewHealth, float Delta);
+
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
 

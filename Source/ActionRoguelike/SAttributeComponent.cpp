@@ -33,6 +33,11 @@ void USAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
+bool USAttributeComponent::GetIsAlive() const
+{
+	return Health > 0.0f;
+}
+
 bool USAttributeComponent::ApplyHealthChange(float Delta)
 {
 	Health += Delta;

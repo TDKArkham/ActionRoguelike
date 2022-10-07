@@ -38,6 +38,7 @@ void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
 }
 
 // Called every frame
@@ -158,5 +159,15 @@ void ASCharacter::PrimaryInteract()
 	if (InteractionComponent)
 	{
 		InteractionComponent->PrimaryInteract();
+	}
+}
+
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwnerComponent, float NewHealth, float Delta)
+{
+	if(NewHealth <= 0.0f && Delta < 0.0f)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+
+		DisableInput(PC);
 	}
 }
