@@ -7,6 +7,9 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 
 // Sets default values
@@ -26,6 +29,9 @@ ASMagicProjectile::ASMagicProjectile()
 	Projectile->InitialSpeed = 1000.0f;
 	Projectile->bRotationFollowsVelocity = true;
 	Projectile->bInitialVelocityInLocalSpace = true;
+
+	FlightAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	FlightAudioComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -33,7 +39,15 @@ void ASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SphereCollision->IgnoreActorWhenMoving(GetInstigator(), true);
+
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
+
+	if (FlightCue)
+	{
+		FlightAudioComponent->SetSound(FlightCue);
+		FlightAudioComponent->Play();
+	}
 }
 
 // Called every frame
@@ -47,8 +61,11 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if(OtherActor && OtherActor != GetInstigator())
 	{
+		if(ImpactCue)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactCue, GetActorLocation(), GetActorRotation());
+		}
 		USAttributeComponent* AttributeComponent = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
-
 		if(AttributeComponent)
 		{
 			AttributeComponent->ApplyHealthChange(-20.0f);

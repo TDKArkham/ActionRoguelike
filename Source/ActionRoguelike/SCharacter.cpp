@@ -5,9 +5,12 @@
 
 #include "DrawDebugHelpers.h"
 #include "SAttributeComponent.h"
+#include "SGameplayInterface.h"
+#include "SHealthPotion.h"
 #include "SInteractionComponent.h"
 #include "SMagicProjectile.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -39,6 +42,8 @@ void ASCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	AttributeComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ASCharacter::OnComponentBeginOverlap);
 }
 
 // Called every frame
@@ -87,6 +92,7 @@ void ASCharacter::MoveRight(float Value)
 void ASCharacter::PrimaryAttack()
 {
 	PlayAnimMontage(AttackAnim);
+	
 
 	const FLatentActionInfo LatentActionInfo(0, FMath::Rand(), TEXT("PrimaryAttack_TimeElapsed"), this);
 	UKismetSystemLibrary::Delay(this, 0.17f, LatentActionInfo);
@@ -169,5 +175,14 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 		APlayerController* PC = Cast<APlayerController>(GetController());
 
 		DisableInput(PC);
+	}
+}
+
+void ASCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+	if(OtherActor && OtherActor->Implements<USGameplayInterface>())
+	{
+		ISGameplayInterface::Execute_Interact(OtherActor, this);
 	}
 }

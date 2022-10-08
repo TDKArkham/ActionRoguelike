@@ -11,7 +11,8 @@ USAttributeComponent::USAttributeComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	Health = 100;
+	HealthMax = 100.0f;
+	Health = HealthMax;
 }
 
 
@@ -38,9 +39,15 @@ bool USAttributeComponent::GetIsAlive() const
 	return Health > 0.0f;
 }
 
+float USAttributeComponent::GetHealth() const
+{
+	return Health;
+}
+
 bool USAttributeComponent::ApplyHealthChange(float Delta)
 {
 	Health += Delta;
+	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta);
 
