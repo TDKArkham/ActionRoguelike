@@ -15,11 +15,15 @@ public:
 	// Sets default values for this character's properties
 	ASAICharacter();
 
-protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UPawnSensingComponent* PawnSensingComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class USAttributeComponent* AttributeComponent;
+
+	UFUNCTION()
+	void OnSeePawn(APawn* Pawn);
 };

@@ -144,7 +144,7 @@ void ASCharacter::PrimaryBlackhole_TimeElapsed()
 FVector ASCharacter::GetHitLocation()
 {
 	FVector Start = CameraComponent->GetComponentLocation();
-	FVector End = CameraComponent->GetComponentRotation().Vector() * 2000.0f + Start;
+	FVector End = GetControlRotation().Vector() * 2000.0f + Start;	//GetControlRotation(), Better than CameraComponent->GetComponentRotation()
 	FHitResult Hit;
 	
 	bool bIsHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_WorldStatic);

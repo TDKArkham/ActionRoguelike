@@ -3,24 +3,34 @@
 
 #include "SAICharacter.h"
 
+#include "AIController.h"
+#include "ActionRoguelike/SAttributeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Perception/PawnSensingComponent.h"
+
 
 // Sets default values
 ASAICharacter::ASAICharacter()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComponent"));
+	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>(TEXT("AttributeComponent"));
+	
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
-// Called when the game starts or when spawned
 void ASAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	PawnSensingComponent->OnSeePawn.AddDynamic(this, &ASAICharacter::OnSeePawn);
 }
 
-// Called every frame
-void ASAICharacter::Tick(float DeltaTime)
+void ASAICharacter::OnSeePawn(APawn* Pawn)
 {
-	Super::Tick(DeltaTime);
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if(AIController)
+	{
+		UBlackboardComponent* Blackboard = AIController->GetBlackboardComponent();
+		Blackboard->SetValueAsObject("TargetActor", Pawn);
+	}
 }
-

@@ -32,6 +32,8 @@ ASMagicProjectile::ASMagicProjectile()
 
 	FlightAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	FlightAudioComponent->SetupAttachment(RootComponent);
+
+	Damage = 20.0f;
 }
 
 // Called when the game starts or when spawned
@@ -68,7 +70,12 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		USAttributeComponent* AttributeComponent = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 		if(AttributeComponent)
 		{
-			AttributeComponent->ApplyHealthChange(-20.0f);
+			if(ExplodeParticle)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(this, ExplodeParticle, GetActorLocation(), GetActorRotation());
+			}
+			
+			AttributeComponent->ApplyHealthChange(-Damage);
 
 			Destroy();
 		}

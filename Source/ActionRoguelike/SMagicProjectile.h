@@ -37,6 +37,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UAudioComponent* FlightAudioComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float Damage;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	UParticleSystem* ExplodeParticle;
+	
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	class USoundCue* ImpactCue;
 
