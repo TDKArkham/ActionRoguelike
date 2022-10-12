@@ -6,6 +6,11 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+class UPawnSensingComponent;
+class USAttributeComponent;
+class UUserWidget;
+class USWorldUserWidget;
+
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
 {
@@ -19,10 +24,13 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UPawnSensingComponent* PawnSensingComponent;
+	UPawnSensingComponent* PawnSensingComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class USAttributeComponent* AttributeComponent;
+	USAttributeComponent* AttributeComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 
 	UFUNCTION()
 	void OnSeePawn(APawn* Pawn);
@@ -32,4 +40,6 @@ protected:
 
 private:
 	void SetTargetActor(AActor* Pawn);
+
+	USWorldUserWidget* UserWidget;
 };

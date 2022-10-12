@@ -73,6 +73,10 @@ protected:
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
+	/***********************************Console Commands************************************/
+	UFUNCTION(Exec)
+	void HealSelf(float Amount = 100.0f);
+	
 private:
 	FVector GetHitLocation();
 	

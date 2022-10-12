@@ -52,7 +52,7 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigateActor, float Delta
 
 	OnHealthChanged.Broadcast(InstigateActor, this, Health, Health-OldHealth);
 
-	return true;
+	return Health - OldHealth != 0;
 }
 
 USAttributeComponent* USAttributeComponent::GetAttributeComponnent(AActor* TergetActor)
@@ -71,4 +71,9 @@ bool USAttributeComponent::GetActorAlive(AActor* TergetActor)
 		return GetAttributeComponnent(TergetActor)->GetIsAlive();
 	}
 	return false;
+}
+
+bool USAttributeComponent::Kill(AActor* InstigatorActor)
+{
+	return ApplyHealthChange(InstigatorActor, -HealthMax);
 }

@@ -6,7 +6,6 @@
 #include "SAttributeComponent.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
-#include "EnvironmentQuery/EnvQuery.h"
 #include "EngineUtils.h"
 
 ASGameModeBase::ASGameModeBase()
@@ -69,5 +68,19 @@ void ASGameModeBase::OnCompletedQuery(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	if(Locations.Num() > 0)
 	{
 		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+	}
+}
+
+void ASGameModeBase::KillAll()
+{
+	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
+	{
+		ASAICharacter* Bot = *It;
+
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributeComponnent(Bot);
+		if (AttributeComponent && USAttributeComponent::GetActorAlive(Bot))
+		{
+			AttributeComponent->Kill(this);
+		}
 	}
 }

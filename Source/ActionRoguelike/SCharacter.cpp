@@ -186,3 +186,8 @@ void ASCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 		ISGameplayInterface::Execute_Interact(OtherActor, this);
 	}
 }
+
+void ASCharacter::HealSelf(float Amount /* = 100.0f */)
+{
+	AttributeComponent->ApplyHealthChange(this, Amount);
+}

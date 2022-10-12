@@ -44,4 +44,7 @@ protected:
 
 	UFUNCTION()
 	void OnCompletedQuery(class UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	UFUNCTION(Exec)
+	void KillAll();
 };
