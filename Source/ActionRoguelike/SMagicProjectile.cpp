@@ -67,15 +67,14 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactCue, GetActorLocation(), GetActorRotation());
 		}
+		if (ExplodeParticle)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, ExplodeParticle, GetActorLocation(), GetActorRotation());
+		}
 		USAttributeComponent* AttributeComponent = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 		if(AttributeComponent)
 		{
-			if(ExplodeParticle)
-			{
-				UGameplayStatics::SpawnEmitterAtLocation(this, ExplodeParticle, GetActorLocation(), GetActorRotation());
-			}
-			
-			AttributeComponent->ApplyHealthChange(-Damage);
+			AttributeComponent->ApplyHealthChange(GetInstigator(), -Damage);
 
 			Destroy();
 		}

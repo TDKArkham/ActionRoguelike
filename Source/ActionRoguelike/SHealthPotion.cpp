@@ -24,7 +24,7 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(Player->GetComponentByClass(USAttributeComponent::StaticClass()));
 		if (AttributeComp && AttributeComp->GetHealth() < 100.0f)
 		{
-			AttributeComp->ApplyHealthChange(HealPower);
+			AttributeComp->ApplyHealthChange(this, HealPower);
 			DeActivateActor();
 		}
 	}

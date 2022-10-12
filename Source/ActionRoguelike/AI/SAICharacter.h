@@ -26,4 +26,10 @@ protected:
 
 	UFUNCTION()
 	void OnSeePawn(APawn* Pawn);
+
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, class USAttributeComponent* OwnerComponent, float NewHealth, float Delta);
+
+private:
+	void SetTargetActor(AActor* Pawn);
 };

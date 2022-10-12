@@ -44,13 +44,31 @@ float USAttributeComponent::GetHealth() const
 	return Health;
 }
 
-bool USAttributeComponent::ApplyHealthChange(float Delta)
+bool USAttributeComponent::ApplyHealthChange(AActor* InstigateActor, float Delta)
 {
 	float OldHealth = Health;
 	Health += Delta;
 	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 
-	OnHealthChanged.Broadcast(nullptr, this, Health, Health-OldHealth);
+	OnHealthChanged.Broadcast(InstigateActor, this, Health, Health-OldHealth);
 
 	return true;
+}
+
+USAttributeComponent* USAttributeComponent::GetAttributeComponnent(AActor* TergetActor)
+{
+	if(TergetActor)
+	{
+		return Cast<USAttributeComponent>(TergetActor->GetComponentByClass(StaticClass()));
+	}
+	return nullptr;
+}
+
+bool USAttributeComponent::GetActorAlive(AActor* TergetActor)
+{
+	if(TergetActor)
+	{
+		return GetAttributeComponnent(TergetActor)->GetIsAlive();
+	}
+	return false;
 }

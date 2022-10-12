@@ -43,5 +43,11 @@ public:
 	FOnHealthChanged OnHealthChanged;
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	bool ApplyHealthChange(float Delta);
+	bool ApplyHealthChange(AActor* InstigateActor, float Delta);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static USAttributeComponent* GetAttributeComponnent(AActor* TergetActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static bool GetActorAlive(AActor* TergetActor);
 };

@@ -23,6 +23,32 @@ void ASGameModeBase::StartPlay()
 
 void ASGameModeBase::SpawnBot_TimeElapsed()
 {
+	/****************Check If the World Can Hold More AICharacters************/
+	int32 NumOfAliveBots = 0;
+	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
+	{
+		ASAICharacter* Bot = *It;
+
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributeComponnent(Bot);
+		if (AttributeComponent && USAttributeComponent::GetActorAlive(Bot))
+		{
+			NumOfAliveBots++;
+		}
+	}
+	float MaxBotNum = 10.0f;
+	if (DifficultyCurve)
+	{
+		MaxBotNum = DifficultyCurve->GetFloatValue(GetWorld()->TimeSeconds);
+	}
+	if (NumOfAliveBots >= MaxBotNum)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Maximum Bots!"));
+		return;;
+	}
+	/****************************Check Finished******************************/
+
+	
+	/*******************************Run EQS******************************/
 	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(this, SpawnBotQuery, this, EEnvQueryRunMode::RandomBest5Pct, nullptr);
 	if(QueryInstance)
 	{
@@ -36,29 +62,6 @@ void ASGameModeBase::OnCompletedQuery(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Spawn bot EQS Failed!"));
 		return;
-	}
-
-	int32 NumOfAliveBots = 0;
-	for(TActorIterator<ASAICharacter> It(GetWorld()); It ; ++It)
-	{
-		ASAICharacter* Bot = *It;
-
-		USAttributeComponent* AttributeComponent = Cast<USAttributeComponent>(Bot->GetComponentByClass(USAttributeComponent::StaticClass()));
-		if(AttributeComponent && AttributeComponent->GetIsAlive())
-		{
-			NumOfAliveBots++;
-		}
-	}
-
-	float MaxBotNum = 10.0f;
-	if (DifficultyCurve)
-	{
-		MaxBotNum = DifficultyCurve->GetFloatValue(GetWorld()->TimeSeconds);
-	}
-	if(NumOfAliveBots >= MaxBotNum)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Maximum Bots!"));
-		return;;
 	}
 	
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
