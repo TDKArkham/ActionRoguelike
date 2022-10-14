@@ -46,11 +46,6 @@ float USAttributeComponent::GetHealth() const
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigateActor, float Delta)
 {
-	if(!GetOwner()->CanBeDamaged())
-	{
-		return false;
-	}
-	
 	float OldHealth = Health;
 	Health += Delta;
 	Health = FMath::Clamp(Health, 0.0f, HealthMax);

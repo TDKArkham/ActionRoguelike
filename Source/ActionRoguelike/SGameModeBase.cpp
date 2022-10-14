@@ -17,7 +17,7 @@ void ASGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 
-	//GetWorldTimerManager().SetTimer(SpawnBotsTimerHandle, this, &ASGameModeBase::SpawnBot_TimeElapsed, SpawnTimeInterval, true);
+	GetWorldTimerManager().SetTimer(SpawnBotsTimerHandle, this, &ASGameModeBase::SpawnBot_TimeElapsed, SpawnTimeInterval, true);
 }
 
 void ASGameModeBase::SpawnBot_TimeElapsed()
