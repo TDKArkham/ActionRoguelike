@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "SProjectileBase.h"
 #include "SMagicProjectile.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_API ASMagicProjectile : public AActor
+class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
 {
 	GENERATED_BODY()
 
@@ -19,35 +19,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class USphereComponent* SphereCollision;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UProjectileMovementComponent* Projectile;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UParticleSystemComponent* ParticleSystem;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UAudioComponent* FlightAudioComponent;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	float Damage;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UParticleSystem* ExplodeParticle;
-	
-	UPROPERTY(EditAnywhere, Category = "Sound")
-	class USoundCue* ImpactCue;
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	class USoundCue* FlightCue;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float Damage;
 
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
