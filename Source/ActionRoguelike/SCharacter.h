@@ -25,6 +25,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	virtual FVector GetPawnViewLocation() const override;
 
 protected:
 
@@ -66,7 +68,7 @@ protected:
 	
 	UFUNCTION()
 	void PrimaryBlackhole_TimeElapsed();
-
+	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, class USAttributeComponent* OwnerComponent, float NewHealth, float Delta);
 

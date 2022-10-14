@@ -47,4 +47,9 @@ protected:
 
 	UFUNCTION(Exec)
 	void KillAll();
+
+	UFUNCTION(Exec)
+	void ToggleAIMove();
+	
+	bool bCanMove;
 };

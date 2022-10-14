@@ -3,6 +3,7 @@
 
 #include "SAIController.h"
 
+#include "BrainComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 

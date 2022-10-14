@@ -3,14 +3,19 @@
 
 #include "SGameModeBase.h"
 
+#include "AIController.h"
+#include "BrainComponent.h"
 #include "SAttributeComponent.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "EngineUtils.h"
 
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Taggole SpawnBots Via Timer"));
+
 ASGameModeBase::ASGameModeBase()
 {
 	SpawnTimeInterval = 2.0f;
+	bCanMove = true;
 }
 
 void ASGameModeBase::StartPlay()
@@ -22,6 +27,11 @@ void ASGameModeBase::StartPlay()
 
 void ASGameModeBase::SpawnBot_TimeElapsed()
 {
+	if(!CVarSpawnBots.GetValueOnGameThread())
+	{
+		return;
+	}
+	
 	/****************Check If the World Can Hold More AICharacters************/
 	int32 NumOfAliveBots = 0;
 	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
@@ -81,6 +91,37 @@ void ASGameModeBase::KillAll()
 		if (AttributeComponent && USAttributeComponent::GetActorAlive(Bot))
 		{
 			AttributeComponent->Kill(this);
+		}
+	}
+}
+
+void ASGameModeBase::ToggleAIMove()
+{
+	bCanMove = !bCanMove;
+	if(bCanMove)
+	{
+		for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
+		{
+			ASAICharacter* Bot = *It;
+
+			AAIController* AIC = Cast<AAIController>(Bot->GetController());
+			if (AIC)
+			{
+				AIC->GetBrainComponent()->StartLogic();
+			}
+		}
+	}
+	else
+	{
+		for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
+		{
+			ASAICharacter* Bot = *It;
+
+			AAIController* AIC = Cast<AAIController>(Bot->GetController());
+			if (AIC)
+			{
+				AIC->GetBrainComponent()->StopLogic("Cheat Code Activated!");
+			}
 		}
 	}
 }
