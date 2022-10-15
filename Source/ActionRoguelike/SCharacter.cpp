@@ -16,7 +16,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-// Sets default values
 ASCharacter::ASCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -38,7 +37,6 @@ ASCharacter::ASCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
-// Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -48,14 +46,12 @@ void ASCharacter::BeginPlay()
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ASCharacter::OnComponentBeginOverlap);
 }
 
-// Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -100,63 +96,22 @@ void ASCharacter::MoveRight(float Value)
 
 void ASCharacter::PrimaryAttack()
 {
-	PlayAnimMontage(AttackAnim);
-	
+	ActionComponent->StartActionByName(this, "PrimaryAttack");
 
-	const FLatentActionInfo LatentActionInfo(0, FMath::Rand(), TEXT("PrimaryAttack_TimeElapsed"), this);
-	UKismetSystemLibrary::Delay(this, 0.17f, LatentActionInfo);
-
-	//GetWorldTimerManager().SetTimer(TimerHandle_ShootDelay, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.17f);
-
-}
-
-void ASCharacter::PrimaryAttack_TimeElapsed()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Shoot!"));
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FVector HitPosition = GetHitLocation();
-	FTransform SpawnTM = FTransform(FRotationMatrix::MakeFromX(HitPosition - HandLocation).Rotator(), HandLocation);
-	FActorSpawnParameters SpawnParam;
-	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParam.Instigator = this;
-
-	if (ProjectileClass)
-	{
-		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParam);
-	}
 }
 
 void ASCharacter::PrimaryBlackhole()
 {
-	PlayAnimMontage(AttackAnim);
-
-	const FLatentActionInfo LatentActionInfo(0, FMath::Rand(), TEXT("PrimaryBlackhole_TimeElapsed"), this);
-	UKismetSystemLibrary::Delay(this, 0.17f, LatentActionInfo);
+	ActionComponent->StartActionByName(this, "BlackHole");
 }
 
-void ASCharacter::PrimaryBlackhole_TimeElapsed()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Shoot!"));
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FVector HitPosition = GetHitLocation();
-	FTransform SpawnTM = FTransform(FRotationMatrix::MakeFromX(HitPosition - HandLocation).Rotator(), HandLocation);
-	FActorSpawnParameters SpawnParam;
-	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParam.Instigator = this;
-
-	if (ProjectileClass)
-	{
-		GetWorld()->SpawnActor<AActor>(BlackHoleClass, SpawnTM, SpawnParam);
-	}
-}
-
-FVector ASCharacter::GetHitLocation()
+/*FVector ASCharacter::GetHitLocation()
 {
 	FVector Start = CameraComponent->GetComponentLocation();
-	FVector End = GetControlRotation().Vector() * 2000.0f + Start;	//GetControlRotation(), Better than CameraComponent->GetComponentRotation()
+	FVector End = GetControlRotation().Vector() * 2000.0f + Start;	//GetControlRotation(), Better than CameraComponent->GetComponentRotation()?
 	FHitResult Hit;
 	
-	bool bIsHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_WorldStatic);
+	bool bIsHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_WorldStatic);// Tutorial uses SweepSingleByObjectType, seems far more better
 	if (bIsHit)
 	{
 		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f);
@@ -167,7 +122,7 @@ FVector ASCharacter::GetHitLocation()
 		DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f);
 		return End;
 	}
-}
+}*/
 
 void ASCharacter::PrimaryInteract()
 {

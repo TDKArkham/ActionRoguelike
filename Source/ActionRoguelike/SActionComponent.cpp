@@ -13,7 +13,14 @@ USActionComponent::USActionComponent()
 void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	for (TSubclassOf<USAction> ActionClass : DefaultActions)
+	{
+		if (ActionClass)
+		{
+			AddAction(ActionClass);
+		}
+	}
 }
 
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -24,14 +31,14 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
 {
-	if(!ActionClass)
+	if (!ActionClass)
 	{
 		return;
 	}
 
 	USAction* NewAction = NewObject<USAction>(this, ActionClass);
 
-	if(NewAction)
+	if (NewAction)
 	{
 		Actions.Add(NewAction);
 	}
@@ -39,9 +46,9 @@ void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
 
 bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
-	for(USAction* Action:Actions)
+	for (USAction* Action : Actions)
 	{
-		if(Action && Action->ActionName == ActionName)
+		if (Action && Action->ActionName == ActionName)
 		{
 			Action->StartAction(Instigator);
 			return true;

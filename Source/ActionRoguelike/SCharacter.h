@@ -51,17 +51,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USActionComponent* ActionComponent;
-
-	/***********************************Sub - Assets************************************/
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> ProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> BlackHoleClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UAnimMontage* AttackAnim;
-
+	
 	/***********************************Functions************************************/
 	void MoveForward(float Value);
 	
@@ -69,19 +59,13 @@ protected:
 	
 	void PrimaryAttack();
 
+	void PrimaryBlackhole();
+
 	void PrimaryInteract();
 
 	void SprintStart();
 	
 	void SprintStop();
-	
-	UFUNCTION()
-	void PrimaryAttack_TimeElapsed();
-
-	void PrimaryBlackhole();
-	
-	UFUNCTION()
-	void PrimaryBlackhole_TimeElapsed();
 	
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, class USAttributeComponent* OwnerComponent, float NewHealth, float Delta);
@@ -92,8 +76,5 @@ protected:
 	/***********************************Console Commands************************************/
 	UFUNCTION(Exec)
 	void HealSelf(float Amount = 100.0f);
-	
-private:
-	FVector GetHitLocation();
 	
 };
