@@ -16,24 +16,6 @@ USAttributeComponent::USAttributeComponent()
 }
 
 
-// Called when the game starts
-void USAttributeComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
-
-// Called every frame
-void USAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 bool USAttributeComponent::GetIsAlive() const
 {
 	return Health > 0.0f;
@@ -42,6 +24,11 @@ bool USAttributeComponent::GetIsAlive() const
 float USAttributeComponent::GetHealth() const
 {
 	return Health;
+}
+
+float USAttributeComponent::GetHealthMax() const
+{
+	return HealthMax;
 }
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigateActor, float Delta)
