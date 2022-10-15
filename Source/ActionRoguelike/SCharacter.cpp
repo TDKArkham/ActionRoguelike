@@ -4,6 +4,7 @@
 #include "SCharacter.h"
 
 #include "DrawDebugHelpers.h"
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SGameplayInterface.h"
 #include "SHealthPotion.h"
@@ -30,6 +31,7 @@ ASCharacter::ASCharacter()
 
 	InteractionComponent = CreateDefaultSubobject<USInteractionComponent>(TEXT("InteractionComponent"));
 	AttributeComponent = CreateDefaultSubobject<USAttributeComponent>(TEXT("AttributeComponent"));
+	ActionComponent = CreateDefaultSubobject<USActionComponent>(TEXT("ActionComponent"));
 
 	bUseControllerRotationYaw = false;
 
@@ -68,6 +70,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::SprintStop);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const
@@ -171,6 +175,16 @@ void ASCharacter::PrimaryInteract()
 	{
 		InteractionComponent->PrimaryInteract();
 	}
+}
+
+void ASCharacter::SprintStart()
+{
+	ActionComponent->StartActionByName(this, "Sprint");
+}
+
+void ASCharacter::SprintStop()
+{
+	ActionComponent->StopActionByName(this, "Sprint");
 }
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwnerComponent, float NewHealth, float Delta)

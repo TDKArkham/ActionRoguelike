@@ -6,6 +6,12 @@
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+class USInteractionComponent;
+class USAttributeComponent;
+class USActionComponent;
+
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 {
@@ -32,16 +38,19 @@ protected:
 
 	/***********************************Components************************************/
 	UPROPERTY(VisibleAnywhere)
-	class USpringArmComponent* CameraBoom;
+	USpringArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* CameraComponent;
+	UCameraComponent* CameraComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	class USInteractionComponent* InteractionComponent;
+	USInteractionComponent* InteractionComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class USAttributeComponent* AttributeComponent;
+	USAttributeComponent* AttributeComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USActionComponent* ActionComponent;
 
 	/***********************************Sub - Assets************************************/
 	UPROPERTY(EditAnywhere, Category = "Attack")
@@ -51,15 +60,20 @@ protected:
 	TSubclassOf<AActor> BlackHoleClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	class UAnimMontage* AttackAnim;
+	UAnimMontage* AttackAnim;
 
 	/***********************************Functions************************************/
 	void MoveForward(float Value);
+	
 	void MoveRight(float Value);
 	
 	void PrimaryAttack();
 
 	void PrimaryInteract();
+
+	void SprintStart();
+	
+	void SprintStop();
 	
 	UFUNCTION()
 	void PrimaryAttack_TimeElapsed();
