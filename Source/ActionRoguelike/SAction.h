@@ -31,7 +31,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
 	void StartAction(AActor* TargetActor);
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Action")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Action")
 	void StopAction(AActor* TargetActor);
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")

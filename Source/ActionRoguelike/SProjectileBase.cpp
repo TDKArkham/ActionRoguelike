@@ -22,7 +22,7 @@ ASProjectileBase::ASProjectileBase()
 	ParticleSystem->SetupAttachment(RootComponent);
 
 	Projectile = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile"));
-	Projectile->InitialSpeed = 1000.0f;
+	Projectile->InitialSpeed = 2000.0f;
 	Projectile->bRotationFollowsVelocity = true;
 	Projectile->bInitialVelocityInLocalSpace = true;
 
