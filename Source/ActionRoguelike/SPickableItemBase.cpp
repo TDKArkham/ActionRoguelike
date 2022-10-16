@@ -1,14 +1,14 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "HealPotionBase.h"
+#include "SPickableItemBase.h"
 
 #include "SCharacter.h"
 #include "Components/BoxComponent.h"
 
 
 // Sets default values
-AHealPotionBase::AHealPotionBase()
+ASPickableItemBase::ASPickableItemBase()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -23,21 +23,21 @@ AHealPotionBase::AHealPotionBase()
 	CooldownTime = 10.0f;
 }
 
-void AHealPotionBase::ActivateActor()
+void ASPickableItemBase::ActivateActor()
 {
 	RootComponent->SetVisibility(true, true);
 	SetActorEnableCollision(true);
 	GetWorldTimerManager().ClearTimer(DeactivateHandle);
 }
 
-void AHealPotionBase::DeActivateActor()
+void ASPickableItemBase::DeActivateActor()
 {
 	RootComponent->SetVisibility(false, true);
 	SetActorEnableCollision(false);
-	GetWorldTimerManager().SetTimer(DeactivateHandle, this, &AHealPotionBase::ActivateActor, CooldownTime);
+	GetWorldTimerManager().SetTimer(DeactivateHandle, this, &ASPickableItemBase::ActivateActor, CooldownTime);
 }
 
-void AHealPotionBase::Interact_Implementation(APawn* InstigatorPawn)
+void ASPickableItemBase::Interact_Implementation(APawn* InstigatorPawn)
 {
 	ISGameplayInterface::Interact_Implementation(InstigatorPawn);
 

@@ -5,6 +5,7 @@
 
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
+#include "SPlayerState.h"
 
 
 // Sets default values
@@ -12,19 +13,21 @@ ASHealthPotion::ASHealthPotion()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	CreditCost = 50;
 }
 
 void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
 	Super::Interact_Implementation(InstigatorPawn);
 
-	ASCharacter* Player = Cast<ASCharacter>(InstigatorPawn);
-	if (Player)
+	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributeComponent(InstigatorPawn);
+	if (AttributeComp && AttributeComp->GetHealth() < 100.0f)
 	{
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(Player->GetComponentByClass(USAttributeComponent::StaticClass()));
-		if (AttributeComp && AttributeComp->GetHealth() < 100.0f)
+		ASPlayerState* PS = InstigatorPawn->GetPlayerState<ASPlayerState>();
+
+		if (PS && PS->RemoveCredit(CreditCost) && AttributeComp->ApplyHealthChange(this, HealPower))
 		{
-			AttributeComp->ApplyHealthChange(this, HealPower);
 			DeActivateActor();
 		}
 	}

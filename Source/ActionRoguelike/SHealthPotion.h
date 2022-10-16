@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HealPotionBase.h"
+#include "SPickableItemBase.h"
 #include "SHealthPotion.generated.h"
 
 UCLASS()
-class ACTIONROGUELIKE_API ASHealthPotion : public AHealPotionBase
+class ACTIONROGUELIKE_API ASHealthPotion : public ASPickableItemBase
 {
 	GENERATED_BODY()
 
@@ -16,5 +16,9 @@ public:
 	ASHealthPotion();
 
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Credits")
+	int32 CreditCost;
+	
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 };

@@ -18,7 +18,7 @@ void USBTService_CheckLowHealth::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 		AActor* OwnerPawn = AIC->GetPawn();
 		if(OwnerPawn)
 		{
-			USAttributeComponent* Attribute = USAttributeComponent::GetAttributeComponnent(OwnerPawn);
+			USAttributeComponent* Attribute = USAttributeComponent::GetAttributeComponent(OwnerPawn);
 			if(Attribute)
 			{
 				float Percentage = Attribute->GetHealth() / Attribute->GetHealthMax();

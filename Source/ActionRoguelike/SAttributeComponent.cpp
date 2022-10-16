@@ -3,6 +3,8 @@
 
 #include "SAttributeComponent.h"
 
+#include "SGameModeBase.h"
+
 
 // Sets default values for this component's properties
 USAttributeComponent::USAttributeComponent()
@@ -42,25 +44,36 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigateActor, float Delta
 	Health += Delta;
 	Health = FMath::Clamp(Health, 0.0f, HealthMax);
 
-	OnHealthChanged.Broadcast(InstigateActor, this, Health, Health-OldHealth);
+	float TrueDelta = Health - OldHealth;
 
-	return Health - OldHealth != 0;
+	OnHealthChanged.Broadcast(InstigateActor, this, Health, TrueDelta);
+
+	if( TrueDelta < 0 && Health == 0.0f)
+	{
+		ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+		if (GM)
+		{
+			GM->OnActorKilled(GetOwner(), InstigateActor);
+		}
+	}
+
+	return TrueDelta != 0;
 }
 
-USAttributeComponent* USAttributeComponent::GetAttributeComponnent(AActor* TergetActor)
+USAttributeComponent* USAttributeComponent::GetAttributeComponent(AActor* TargetActor)
 {
-	if(TergetActor)
+	if(TargetActor)
 	{
-		return Cast<USAttributeComponent>(TergetActor->GetComponentByClass(StaticClass()));
+		return Cast<USAttributeComponent>(TargetActor->GetComponentByClass(StaticClass()));
 	}
 	return nullptr;
 }
 
-bool USAttributeComponent::GetActorAlive(AActor* TergetActor)
+bool USAttributeComponent::GetActorAlive(AActor* TargetActor)
 {
-	if(TergetActor)
+	if(TargetActor)
 	{
-		return GetAttributeComponnent(TergetActor)->GetIsAlive();
+		return GetAttributeComponent(TargetActor)->GetIsAlive();
 	}
 	return false;
 }

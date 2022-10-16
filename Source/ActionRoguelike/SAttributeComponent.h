@@ -45,8 +45,8 @@ public:
 	bool ApplyHealthChange(AActor* InstigateActor, float Delta);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	static USAttributeComponent* GetAttributeComponnent(AActor* TergetActor);
+	static USAttributeComponent* GetAttributeComponent(AActor* TargetActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	static bool GetActorAlive(AActor* TergetActor);
+	static bool GetActorAlive(AActor* TargetActor);
 };

@@ -9,12 +9,16 @@
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "EngineUtils.h"
+#include "SCharacter.h"
+#include "SPlayerState.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Taggole SpawnBots Via Timer"));
 
 ASGameModeBase::ASGameModeBase()
 {
 	SpawnTimeInterval = 2.0f;
+	PlayerReSpawnTime = 2.0f;
+	KillCredits = 100;
 	bCanMove = true;
 }
 
@@ -38,7 +42,7 @@ void ASGameModeBase::SpawnBot_TimeElapsed()
 	{
 		ASAICharacter* Bot = *It;
 
-		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributeComponnent(Bot);
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributeComponent(Bot);
 		if (AttributeComponent && USAttributeComponent::GetActorAlive(Bot))
 		{
 			NumOfAliveBots++;
@@ -81,13 +85,44 @@ void ASGameModeBase::OnCompletedQuery(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	}
 }
 
+void ASGameModeBase::RespawnPlayer_TimeElapsed(AController* Controller)
+{
+	if(Controller)
+	{
+		Controller->UnPossess();
+		RestartPlayer(Controller);
+	}
+}
+
+void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
+{
+	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
+	if(Player)
+	{
+		FTimerDelegate Delegate;
+		Delegate.BindUFunction(this, "RespawnPlayer_TimeElapsed", Player->GetController());
+		FTimerHandle RespawnPlayerTimerHandle;
+		GetWorldTimerManager().SetTimer(RespawnPlayerTimerHandle, Delegate, PlayerReSpawnTime, false);
+	}
+
+	APawn* KillerPawn = Cast<APawn>(Killer);
+	if(KillerPawn)
+	{
+		ASPlayerState* PS = Cast<ASPlayerState>(KillerPawn->GetPlayerState());
+		if(PS)
+		{
+			PS->AddCredits(KillCredits);
+		}
+	}
+}
+
 void ASGameModeBase::KillAll()
 {
 	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
 	{
 		ASAICharacter* Bot = *It;
 
-		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributeComponnent(Bot);
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributeComponent(Bot);
 		if (AttributeComponent && USAttributeComponent::GetActorAlive(Bot))
 		{
 			AttributeComponent->Kill(this);

@@ -23,18 +23,21 @@ public:
 	
 	virtual void StartPlay() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Kill")
+	void OnActorKilled(AActor* VictimActor, AActor* Killer);
+
 protected:
 
 	FTimerHandle SpawnBotsTimerHandle;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
-	class UEnvQuery* SpawnBotQuery;
+	UEnvQuery* SpawnBotQuery;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float SpawnTimeInterval;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
-	class UCurveFloat* DifficultyCurve;
+	UCurveFloat* DifficultyCurve;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	TSubclassOf<AActor> MinionClass;
@@ -43,7 +46,16 @@ protected:
 	void SpawnBot_TimeElapsed();
 
 	UFUNCTION()
+	void RespawnPlayer_TimeElapsed(AController* Controller);
+
+	UFUNCTION()
 	void OnCompletedQuery(class UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Respawn")
+	float PlayerReSpawnTime;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Credits")
+	int32 KillCredits;
 
 	UFUNCTION(Exec)
 	void KillAll();

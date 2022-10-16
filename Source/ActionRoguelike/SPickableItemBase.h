@@ -5,29 +5,31 @@
 #include "CoreMinimal.h"
 #include "SGameplayInterface.h"
 #include "GameFramework/Actor.h"
-#include "HealPotionBase.generated.h"
+#include "SPickableItemBase.generated.h"
+
+class UBoxComponent;
 
 UCLASS()
-class ACTIONROGUELIKE_API AHealPotionBase : public AActor, public ISGameplayInterface
+class ACTIONROGUELIKE_API ASPickableItemBase : public AActor, public ISGameplayInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	AHealPotionBase();
+	ASPickableItemBase();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		class UStaticMeshComponent* MeshComponent;
+	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		class UBoxComponent* BoxTrigger;
+	UBoxComponent* BoxTrigger;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Heal")
-		float HealPower;
+	float HealPower;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Heal")
-		float CooldownTime;
+	float CooldownTime;
 
 private:
 

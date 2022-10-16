@@ -15,7 +15,7 @@ EBTNodeResult::Type USBTTask_HideAndHeal::ExecuteTask(UBehaviorTreeComponent& Ow
 		AActor* OwnerPawn = AIC->GetPawn();
 		if (OwnerPawn)
 		{
-			USAttributeComponent* Attribute = USAttributeComponent::GetAttributeComponnent(OwnerPawn);
+			USAttributeComponent* Attribute = USAttributeComponent::GetAttributeComponent(OwnerPawn);
 			if (Attribute)
 			{
 				Attribute->ApplyHealthChange(nullptr, HealHealth);
