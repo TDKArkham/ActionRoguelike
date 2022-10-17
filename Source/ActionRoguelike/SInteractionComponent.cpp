@@ -5,7 +5,10 @@
 
 #include "DrawDebugHelpers.h"
 #include "SGameplayInterface.h"
+#include "SWorldUserWidget.h"
+#include "Blueprint/UserWidget.h"
 
+static TAutoConsoleVariable<bool> CVarDrawDebug(TEXT("DrawDebug"), false, TEXT("Toggle to draw debug things in game"));
 
 // Sets default values for this component's properties
 USInteractionComponent::USInteractionComponent()
@@ -14,7 +17,8 @@ USInteractionComponent::USInteractionComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	TraceDistance = 1000.0f;
+	TraceChannel = ECC_WorldDynamic;
 }
 
 
@@ -33,15 +37,17 @@ void USInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	FindBestInteractable();
 }
 
-void USInteractionComponent::PrimaryInteract()
+void USInteractionComponent::FindBestInteractable()
 {
+	bool bDrawDebug = CVarDrawDebug.GetValueOnGameThread();
+	
 	AActor* MyOwner = GetOwner();
 
 	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	ObjectQueryParams.AddObjectTypesToQuery(TraceChannel);
 
 	FHitResult Hit;
 
@@ -49,18 +55,58 @@ void USInteractionComponent::PrimaryInteract()
 	FRotator EyeRotation;
 	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 	//FVector Start;
-	FVector End = EyeLocation + EyeRotation.Vector() * 1000.0f;
+	FVector End = EyeLocation + EyeRotation.Vector() * TraceDistance;
 
 	GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, End, ObjectQueryParams);
 
+	FocusedActor = nullptr;
+	
 	AActor* HitActor = Hit.GetActor();
 	if (HitActor)
 	{
-		DrawDebugLine(GetWorld(), EyeLocation, End, FColor::Green, false, 2.0f);
+		if(bDrawDebug)
+		{
+			DrawDebugLine(GetWorld(), EyeLocation, End, FColor::Green, false, 2.0f);
+		}
+		
 		if (HitActor->Implements<USGameplayInterface>())
 		{
-			APawn* MyPawn = Cast<APawn>(MyOwner);
-			ISGameplayInterface::Execute_Interact(HitActor, MyPawn);
+			FocusedActor = HitActor;
 		}
 	}
+
+	if(FocusedActor)
+	{
+		if(DefaultWidgetInstance == nullptr && DefaultWidgetClass)
+		{
+			DefaultWidgetInstance = CreateWidget<USWorldUserWidget>(GetWorld(), DefaultWidgetClass);
+		}
+
+		if(DefaultWidgetInstance)
+		{
+			DefaultWidgetInstance->AttachedActor = FocusedActor;
+			if(!DefaultWidgetInstance->IsInViewport())
+			{
+				DefaultWidgetInstance->AddToViewport();
+			}
+		}
+	}
+	else
+	{
+		if(DefaultWidgetInstance)
+		{
+			DefaultWidgetInstance->RemoveFromParent();
+		}
+	}
+}
+
+void USInteractionComponent::PrimaryInteract()
+{
+	if(FocusedActor == nullptr)
+	{
+		return;
+	}
+	
+	APawn* MyPawn = Cast<APawn>(GetOwner());
+	ISGameplayInterface::Execute_Interact(FocusedActor, MyPawn);
 }
