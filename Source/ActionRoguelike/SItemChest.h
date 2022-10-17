@@ -17,20 +17,18 @@ public:
 	ASItemChest();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-protected:
 
 	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* BaseMesh;
+	UStaticMeshComponent* BaseMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UStaticMeshComponent* LidMesh;
+	UStaticMeshComponent* LidMesh;
+
+	UPROPERTY(ReplicatedUsing="OneRep_LidOpened", BlueprintReadOnly)
+	bool bLidOpened;
+
+	UFUNCTION()
+	void OneRep_LidOpened();
 
 public:
 
@@ -38,4 +36,5 @@ public:
 	float TargetPitch;
 	
 	void Interact_Implementation(APawn* InstigatorPawn);
+	
 };

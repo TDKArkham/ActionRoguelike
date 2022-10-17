@@ -36,8 +36,11 @@ void USInteractionComponent::BeginPlay()
 void USInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	FindBestInteractable();
+	
+	if(Cast<APawn>(GetOwner())->IsLocallyControlled())
+	{
+		FindBestInteractable();
+	}
 }
 
 void USInteractionComponent::FindBestInteractable()
@@ -100,13 +103,18 @@ void USInteractionComponent::FindBestInteractable()
 	}
 }
 
-void USInteractionComponent::PrimaryInteract()
+void USInteractionComponent::ServerInteract_Implementation(AActor* InFocus)
 {
-	if(FocusedActor == nullptr)
+	if(InFocus == nullptr)
 	{
 		return;
 	}
 	
 	APawn* MyPawn = Cast<APawn>(GetOwner());
-	ISGameplayInterface::Execute_Interact(FocusedActor, MyPawn);
+	ISGameplayInterface::Execute_Interact(InFocus, MyPawn);
+}
+
+void USInteractionComponent::PrimaryInteract()
+{
+	ServerInteract(FocusedActor);
 }

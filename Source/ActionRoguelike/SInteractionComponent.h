@@ -43,6 +43,9 @@ protected:
 	USWorldUserWidget* DefaultWidgetInstance;
 	
 	void FindBestInteractable();
+
+	UFUNCTION(Reliable, Server)
+	void ServerInteract(AActor* InFocus);
 	
 public:
 	void PrimaryInteract();

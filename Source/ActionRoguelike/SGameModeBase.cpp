@@ -12,7 +12,7 @@
 #include "SCharacter.h"
 #include "SPlayerState.h"
 
-static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Taggole SpawnBots Via Timer"));
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), false, TEXT("Taggole SpawnBots Via Timer"));
 
 ASGameModeBase::ASGameModeBase()
 {
