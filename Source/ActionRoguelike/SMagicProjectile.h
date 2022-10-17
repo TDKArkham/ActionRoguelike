@@ -7,6 +7,7 @@
 #include "SProjectileBase.h"
 #include "SMagicProjectile.generated.h"
 
+class USAction_Effect;
 UCLASS()
 class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
 {
@@ -21,14 +22,15 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-
-
-
+	
 	UPROPERTY(EditAnywhere, Category = "Sound")
-	class USoundCue* FlightCue;
+	USoundCue* FlightCue;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float Damage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Attack")
+	TSubclassOf<USAction_Effect> AttackEffect;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	FGameplayTag ParryTag;

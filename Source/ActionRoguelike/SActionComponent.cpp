@@ -18,12 +18,12 @@ void USActionComponent::BeginPlay()
 	{
 		if (ActionClass)
 		{
-			AddAction(ActionClass);
+			AddAction(GetOwner(), ActionClass);
 		}
 	}
 }
 
-void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
+void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
 {
 	if (!ActionClass)
 	{
@@ -35,7 +35,22 @@ void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
 	if (NewAction)
 	{
 		Actions.Add(NewAction);
+
+		if (NewAction->CanStart(Instigator) && NewAction->bAutoStart)
+		{
+			NewAction->StartAction(Instigator);
+		}
 	}
+}
+
+void USActionComponent::RemoveAction(USAction* ActionToRemove)
+{
+	if(!(ActionToRemove && !ActionToRemove->GetIsRunning()))
+	{
+		return;
+	}
+
+	Actions.Remove(ActionToRemove);
 }
 
 bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)

@@ -52,7 +52,7 @@ UWorld* USAction::GetWorld() const
 	return nullptr;
 }
 
-USActionComponent* USAction::GetOwnerComponent()
+USActionComponent* USAction::GetOwnerComponent() const
 {
 	return Cast<USActionComponent>(GetOuter());
 }

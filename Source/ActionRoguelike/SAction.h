@@ -26,6 +26,9 @@ protected:
 public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	bool bAutoStart;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	FName ActionName;
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Action")
@@ -41,7 +44,7 @@ public:
 	bool GetIsRunning();
 
 	UFUNCTION(BlueprintCallable, Category = "Tags")
-	USActionComponent* GetOwnerComponent();
+	USActionComponent* GetOwnerComponent() const;
 	
 	virtual UWorld* GetWorld() const override;
 };
