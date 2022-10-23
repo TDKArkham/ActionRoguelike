@@ -28,6 +28,8 @@ ASProjectileBase::ASProjectileBase()
 
 	FlightAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	FlightAudioComponent->SetupAttachment(RootComponent);
+
+	SetReplicates(true);
 }
 
 void ASProjectileBase::PostInitializeComponents()
