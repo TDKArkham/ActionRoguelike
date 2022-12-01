@@ -54,6 +54,19 @@ void USActionComponent::RemoveAction(USAction* ActionToRemove)
 	Actions.Remove(ActionToRemove);
 }
 
+USAction* USActionComponent::HasAction(TSubclassOf<USAction> ActionToCheck)
+{
+	for(USAction* Action : Actions)
+	{
+		if(Action && Action->IsA(ActionToCheck))
+		{
+			return Action;
+		}
+	}
+
+	return nullptr;
+}
+
 void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
 {
 	StartActionByName(Instigator, ActionName);

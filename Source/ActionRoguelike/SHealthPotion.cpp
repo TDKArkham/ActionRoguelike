@@ -15,6 +15,7 @@ ASHealthPotion::ASHealthPotion()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CreditCost = 50;
+	HealPower = 10.0f;
 }
 
 void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)

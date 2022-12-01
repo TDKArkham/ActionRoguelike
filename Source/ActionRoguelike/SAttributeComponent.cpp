@@ -17,6 +17,9 @@ USAttributeComponent::USAttributeComponent()
 	HealthMax = 100.0f;
 	Health = HealthMax;
 
+	Rage = 0;
+	RageMax = 100.0f;
+
 	SetIsReplicatedByDefault(true);
 }
 
@@ -39,6 +42,11 @@ float USAttributeComponent::GetHealthMax() const
 void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* InstigatorActor, float NewHealth, float Delta)
 {
 	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
+}
+
+void USAttributeComponent::MulticastRageChanged_Implementation(AActor* InstigatorActor, float NewRage, float Delta)
+{
+	OnRageChanged.Broadcast(InstigatorActor, this, NewRage, Delta);
 }
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigateActor, float Delta)
@@ -90,6 +98,42 @@ bool USAttributeComponent::GetActorAlive(AActor* TargetActor)
 	return false;
 }
 
+float USAttributeComponent::GetRage() const
+{
+	return Rage;
+}
+
+float USAttributeComponent::GetRageMax() const
+{
+	return RageMax;
+}
+
+bool USAttributeComponent::ApplyRageChange(AActor* InstigateActor, float Delta)
+{
+	float OldRage = Rage;
+	Rage += Delta;
+	Rage = FMath::Clamp(Rage, 0.0f, RageMax);
+
+	float TrueDelta = Rage - OldRage;
+
+	if (TrueDelta != 0.0f)
+	{
+		OnRageChanged.Broadcast(InstigateActor, this, Rage, TrueDelta);
+		//MulticastHealthChanged(InstigateActor, Health, TrueDelta);
+	}
+
+	/*if (TrueDelta < 0 && Health == 0.0f)
+	{
+		ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+		if (GM)
+		{
+			GM->OnActorKilled(GetOwner(), InstigateActor);
+		}
+	}*/
+
+	return TrueDelta != 0;
+}
+
 bool USAttributeComponent::Kill(AActor* InstigatorActor)
 {
 	return ApplyHealthChange(InstigatorActor, -HealthMax);
@@ -101,6 +145,9 @@ void USAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 
 	DOREPLIFETIME(USAttributeComponent, Health);
 	DOREPLIFETIME(USAttributeComponent, HealthMax);
+
+	DOREPLIFETIME(USAttributeComponent, Rage);
+	DOREPLIFETIME(USAttributeComponent, RageMax);
 
 	//DOREPLIFETIME_CONDITION(USAttributeComponent, HealthMax, COND_OwnerOnly);
 }

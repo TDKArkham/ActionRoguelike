@@ -39,7 +39,17 @@ void ASAICharacter::BeginPlay()
 
 void ASAICharacter::OnSeePawn(APawn* Pawn)
 {
-	SetTargetActor(Pawn);
+	if (GetTargetActor() != Pawn)
+	{
+		SetTargetActor(Pawn);
+
+		USWorldUserWidget* SpottedWidget = CreateWidget<USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
+		if (UserWidget)
+		{
+			UserWidget->AttachedActor = this;
+			UserWidget->AddToViewport(10);
+		}
+	}
 }
 
 void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwnerComponent, float NewHealth, float Delta)
@@ -51,10 +61,10 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 			SetTargetActor(InstigatorActor);
 		}
 
-		if(UserWidget == nullptr)
+		if (UserWidget == nullptr)
 		{
 			UserWidget = CreateWidget<USWorldUserWidget>(GetWorld(), HealthBarWidgetClass);
-			if(UserWidget)
+			if (UserWidget)
 			{
 				UserWidget->AttachedActor = this;
 				UserWidget->AddToViewport();
@@ -87,5 +97,19 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 void ASAICharacter::SetTargetActor(AActor* Actor)
 {
 	AAIController* AIController = Cast<AAIController>(GetController());
-	AIController->GetBlackboardComponent()->SetValueAsObject("TargetActor", Actor);
+	if(AIController)
+	{
+		AIController->GetBlackboardComponent()->SetValueAsObject("TargetActor", Actor);
+	}
+}
+
+AActor* ASAICharacter::GetTargetActor()
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if(AIController)
+	{
+		return Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+	}
+
+	return nullptr;
 }

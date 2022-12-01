@@ -19,6 +19,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Credits")
 	int32 CreditCost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Heal")
+	float HealPower;
 	
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 };

@@ -26,9 +26,6 @@ protected:
 	UBoxComponent* BoxTrigger;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Heal")
-	float HealPower;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Heal")
 	float CooldownTime;
 
 private:

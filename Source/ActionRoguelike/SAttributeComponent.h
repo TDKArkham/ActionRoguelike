@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "SAttributeComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, class USAttributeComponent*, OwnerComponent, float, NewHealth, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnAttributeChanged, AActor*, InstigatorActor, class USAttributeComponent*, OwnerComponent, float, NewValue, float, Delta);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
@@ -24,32 +24,53 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
 	float HealthMax;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
+	float Rage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category = "Attributes")
+	float RageMax;
+
 public:
 
-	UFUNCTION(BlueprintCallable)
-	bool GetIsAlive() const;
-
-	UFUNCTION(BlueprintCallable)
-	float GetHealth() const;
-
-	UFUNCTION(BlueprintCallable)
-	float GetHealthMax() const;
-
-	UFUNCTION(BlueprintCallable)
-	bool Kill(AActor* InstigatorActor);
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChanged OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnHealthChanged OnHealthChanged;
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
+	FOnAttributeChanged OnRageChanged;
 	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool GetIsAlive() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetHealthMax() const;
+
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool ApplyHealthChange(AActor* InstigateActor, float Delta);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
-	static USAttributeComponent* GetAttributeComponent(AActor* TargetActor);
+	float GetRage() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetRageMax() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool ApplyRageChange(AActor* InstigateActor, float Delta);
+
+	UFUNCTION(BlueprintCallable)
+	bool Kill(AActor* InstigatorActor);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRageChanged(AActor* InstigatorActor, float NewRage, float Delta);
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	static bool GetActorAlive(AActor* TargetActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	static USAttributeComponent* GetAttributeComponent(AActor* TargetActor);
 };

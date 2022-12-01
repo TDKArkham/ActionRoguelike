@@ -18,8 +18,7 @@ ASPickableItemBase::ASPickableItemBase()
 
 	BoxTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxTrigger"));
 	BoxTrigger->SetupAttachment(RootComponent);
-
-	HealPower = 10.0f;
+	
 	CooldownTime = 10.0f;
 }
 

@@ -36,6 +36,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	void RemoveAction(USAction* ActionToRemove);
 
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	USAction* HasAction(TSubclassOf<USAction> ActionToCheck);
+
 	UFUNCTION(Server, Reliable)
 	void ServerStartAction(AActor* Instigator, FName ActionName);
 

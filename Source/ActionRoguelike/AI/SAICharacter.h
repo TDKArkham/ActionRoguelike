@@ -36,6 +36,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> SpottedWidgetClass;
+
 	UFUNCTION()
 	void OnSeePawn(APawn* Pawn);
 
@@ -44,6 +47,7 @@ protected:
 
 private:
 	void SetTargetActor(AActor* Pawn);
+	AActor* GetTargetActor();
 
 	USWorldUserWidget* UserWidget;
 };
