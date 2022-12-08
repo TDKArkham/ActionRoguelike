@@ -17,13 +17,17 @@ class ACTIONROGUELIKE_API USActionComponent : public UActorComponent
 public:	
 	USActionComponent();
 
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
+	
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Actions")
 	TArray<TSubclassOf<USAction>> DefaultActions;
 	
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<USAction*> Actions;
 
 public:

@@ -3,11 +3,19 @@
 
 #include "SAction.h"
 
+#include "ActionRoguelike.h"
 #include "SActionComponent.h"
+#include "Net/UnrealNetwork.h"
+
+void USAction::Initialize(USActionComponent* NewActionComponent)
+{
+	ActionComponent = NewActionComponent;
+}
 
 void USAction::StartAction_Implementation(AActor* TargetActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Start Action: %s"), *GetNameSafe(this));
+	//UE_LOG(LogTemp, Warning, TEXT("Start Action: %s"), *GetNameSafe(this));
+	LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
 
 	USActionComponent* ActionComp = GetOwnerComponent();
 	ActionComp->ActiveGameplayTags.AppendTags(GrantsTags);
@@ -17,7 +25,8 @@ void USAction::StartAction_Implementation(AActor* TargetActor)
 
 void USAction::StopAction_Implementation(AActor* TargetActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Stop Action: %s"), *GetNameSafe(this));
+	//UE_LOG(LogTemp, Warning, TEXT("Stop Action: %s"), *GetNameSafe(this));
+	LogOnScreen(this, FString::Printf(TEXT("Stopped: %s"), *ActionName.ToString()), FColor::White);
 
 	USActionComponent* ActionComp = GetOwnerComponent();
 	ActionComp->ActiveGameplayTags.RemoveTags(GrantsTags);
@@ -44,20 +53,40 @@ bool USAction::CanStart_Implementation(AActor* Instigator)
 UWorld* USAction::GetWorld() const
 {
 	// Outer: set when create the action in SActionComponent via NewObject<T>
-	UActorComponent* ActorComponent = Cast<UActorComponent>(GetOuter());
-	if (ActorComponent)
+	AActor* Actor = Cast<AActor>(GetOuter());
+	if (Actor)
 	{
-		return ActorComponent->GetWorld();
+		return Actor->GetWorld();
 	}
 	return nullptr;
 }
 
 USActionComponent* USAction::GetOwnerComponent() const
 {
-	return Cast<USActionComponent>(GetOuter());
+	return ActionComponent;
+}
+
+void USAction::OnRep_IsRunning()
+{
+	if(bIsRunning)
+	{
+		StartAction(nullptr);
+	}
+	else
+	{
+		StopAction(nullptr);
+	}
 }
 
 bool USAction::GetIsRunning()
 {
 	return bIsRunning;
+}
+
+void USAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USAction, bIsRunning);
+	DOREPLIFETIME(USAction, ActionComponent);
 }

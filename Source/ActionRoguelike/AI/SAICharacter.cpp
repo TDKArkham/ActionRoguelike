@@ -44,10 +44,10 @@ void ASAICharacter::OnSeePawn(APawn* Pawn)
 		SetTargetActor(Pawn);
 
 		USWorldUserWidget* SpottedWidget = CreateWidget<USWorldUserWidget>(GetWorld(), SpottedWidgetClass);
-		if (UserWidget)
+		if (SpottedWidget)
 		{
-			UserWidget->AttachedActor = this;
-			UserWidget->AddToViewport(10);
+			SpottedWidget->AttachedActor = this;
+			SpottedWidget->AddToViewport(10);
 		}
 	}
 }

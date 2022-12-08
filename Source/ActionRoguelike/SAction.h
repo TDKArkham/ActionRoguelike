@@ -15,16 +15,28 @@ class ACTIONROGUELIKE_API USAction : public UObject
 	GENERATED_BODY()
 
 protected:
+
+	UPROPERTY(Replicated)
+	USActionComponent* ActionComponent;
+	
 	UPROPERTY(EditAnywhere, Category = "Tags")
 	FGameplayTagContainer GrantsTags;
 
 	UPROPERTY(EditAnywhere, Category = "Tags")
 	FGameplayTagContainer BlockedTags;
 
+	UPROPERTY(ReplicatedUsing="OnRep_IsRunning")
 	bool bIsRunning;
+
+	UFUNCTION()
+	void OnRep_IsRunning();
 	
 public:
 
+	void Initialize(USActionComponent* NewActionComponent);
+	
+	bool IsSupportedForNetworking() const override { return true; }
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	bool bAutoStart;
 
