@@ -17,20 +17,21 @@ void USAction_ProjectileAttack::StartAction_Implementation(AActor* TargetActor)
 	Super::StartAction_Implementation(TargetActor);
 
 	ACharacter* Character = Cast<ACharacter>(TargetActor);
-	if(Character)
+	if (Character)
 	{
 		Character->PlayAnimMontage(AttackAnim);
 
 
 		/*const FLatentActionInfo LatentActionInfo(0, FMath::Rand(), TEXT("PrimaryAttack_TimeElapsed"), this);
 		UKismetSystemLibrary::Delay(this, 0.17f, LatentActionInfo);*/
+		if (Character->HasAuthority())
+		{
+			FTimerHandle AttackDelayTimerHandle;
+			FTimerDelegate Delegate;
+			Delegate.BindUFunction(this, "AttackDelay_Elapsed", Character);
 
-		FTimerHandle AttackDelayTimerHandle;
-		FTimerDelegate Delegate;
-		Delegate.BindUFunction(this, "AttackDelay_Elapsed", Character);
-
-		GetWorld()->GetTimerManager().SetTimer(AttackDelayTimerHandle, Delegate, AttackDelayTime, false);
-		
+			GetWorld()->GetTimerManager().SetTimer(AttackDelayTimerHandle, Delegate, AttackDelayTime, false);
+		}
 	}
 }
 

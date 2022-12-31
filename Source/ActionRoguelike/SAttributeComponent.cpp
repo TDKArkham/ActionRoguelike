@@ -51,29 +51,32 @@ void USAttributeComponent::MulticastRageChanged_Implementation(AActor* Instigato
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigateActor, float Delta)
 {
-	if(!GetOwner()->CanBeDamaged())
+	if (!GetOwner()->CanBeDamaged())
 	{
 		return false;
 	}
-	
+
 	float OldHealth = Health;
-	Health += Delta;
-	Health = FMath::Clamp(Health, 0.0f, HealthMax);
+	float NewHealth = FMath::Clamp(Health + Delta, 0.0f, HealthMax);
 
-	float TrueDelta = Health - OldHealth;
+	float TrueDelta = NewHealth - OldHealth;
 
-	if(TrueDelta != 0.0f)
+	if (GetOwner()->HasAuthority())
 	{
-		//OnHealthChanged.Broadcast(InstigateActor, this, Health, TrueDelta);
-		MulticastHealthChanged(InstigateActor, Health, TrueDelta);
-	}
-
-	if( TrueDelta < 0 && Health == 0.0f)
-	{
-		ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
-		if (GM)
+		// Only do this when in server.
+		Health = NewHealth;
+		if (TrueDelta != 0.0f)
 		{
-			GM->OnActorKilled(GetOwner(), InstigateActor);
+			MulticastHealthChanged(InstigateActor, Health, TrueDelta);
+		}
+
+		if (TrueDelta < 0 && Health == 0.0f)
+		{
+			ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+			if (GM)
+			{
+				GM->OnActorKilled(GetOwner(), InstigateActor);
+			}
 		}
 	}
 
@@ -82,7 +85,7 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigateActor, float Delta
 
 USAttributeComponent* USAttributeComponent::GetAttributeComponent(AActor* TargetActor)
 {
-	if(TargetActor)
+	if (TargetActor)
 	{
 		return Cast<USAttributeComponent>(TargetActor->GetComponentByClass(StaticClass()));
 	}
@@ -91,7 +94,7 @@ USAttributeComponent* USAttributeComponent::GetAttributeComponent(AActor* Target
 
 bool USAttributeComponent::GetActorAlive(AActor* TargetActor)
 {
-	if(TargetActor)
+	if (TargetActor)
 	{
 		return GetAttributeComponent(TargetActor)->GetIsAlive();
 	}

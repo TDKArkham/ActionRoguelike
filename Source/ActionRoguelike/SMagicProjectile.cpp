@@ -9,9 +9,7 @@
 #include "SGameplayFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Particles/ParticleSystemComponent.h"
 #include "Components/AudioComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
 
@@ -67,7 +65,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			HitExplode();
 
-			if (ActionComp)
+			if (ActionComp && HasAuthority())
 			{
 				ActionComp->AddAction(GetInstigator(), AttackEffect);
 			}

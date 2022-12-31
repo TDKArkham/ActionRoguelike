@@ -14,29 +14,31 @@ void USAction::Initialize(USActionComponent* NewActionComponent)
 
 void USAction::StartAction_Implementation(AActor* TargetActor)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Start Action: %s"), *GetNameSafe(this));
-	LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
+	UE_LOG(LogTemp, Warning, TEXT("Start Action: %s"), *GetNameSafe(this));
+	//LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
 
 	USActionComponent* ActionComp = GetOwnerComponent();
 	ActionComp->ActiveGameplayTags.AppendTags(GrantsTags);
 
-	bIsRunning = true;
+	RepData.bIsRunning = true;
+	RepData.TargetActor = TargetActor;
 }
 
 void USAction::StopAction_Implementation(AActor* TargetActor)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Stop Action: %s"), *GetNameSafe(this));
-	LogOnScreen(this, FString::Printf(TEXT("Stopped: %s"), *ActionName.ToString()), FColor::White);
+	UE_LOG(LogTemp, Warning, TEXT("Stop Action: %s"), *GetNameSafe(this));
+	//LogOnScreen(this, FString::Printf(TEXT("Stopped: %s"), *ActionName.ToString()), FColor::White);
 
 	USActionComponent* ActionComp = GetOwnerComponent();
 	ActionComp->ActiveGameplayTags.RemoveTags(GrantsTags);
 
-	bIsRunning = false;
+	RepData.bIsRunning = false;
+	RepData.TargetActor = TargetActor;
 }
 
 bool USAction::CanStart_Implementation(AActor* Instigator)
 {
-	if(bIsRunning)
+	if(RepData.bIsRunning)
 	{
 		return false;
 	}
@@ -66,27 +68,27 @@ USActionComponent* USAction::GetOwnerComponent() const
 	return ActionComponent;
 }
 
-void USAction::OnRep_IsRunning()
+void USAction::OnRep_RepData()
 {
-	if(bIsRunning)
+	if(RepData.bIsRunning)
 	{
-		StartAction(nullptr);
+		StartAction(RepData.TargetActor);
 	}
 	else
 	{
-		StopAction(nullptr);
+		StopAction(RepData.TargetActor);
 	}
 }
 
 bool USAction::GetIsRunning()
 {
-	return bIsRunning;
+	return RepData.bIsRunning;
 }
 
 void USAction::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(USAction, bIsRunning);
+	DOREPLIFETIME(USAction, RepData);
 	DOREPLIFETIME(USAction, ActionComponent);
 }
