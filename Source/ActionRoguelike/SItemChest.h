@@ -24,16 +24,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
 
-	UPROPERTY(ReplicatedUsing="OneRep_LidOpened", BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly, SaveGame)
 	bool bLidOpened;
 
 	UFUNCTION()
-	void OneRep_LidOpened();
+	void OnRep_LidOpened();
 
 public:
 
 	UPROPERTY(EditAnywhere)
 	float TargetPitch;
+
+	void OnActorLoaded_Implementation();
 	
 	void Interact_Implementation(APawn* InstigatorPawn);
 	

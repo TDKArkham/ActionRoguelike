@@ -9,6 +9,8 @@
 
 #include "SGameModeBase.generated.h"
 
+class USSaveGame;
+
 /**
  * 
  */
@@ -20,8 +22,12 @@ class ACTIONROGUELIKE_API ASGameModeBase : public AGameModeBase
 public:
 
 	ASGameModeBase();
-	
+
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
 	virtual void StartPlay() override;
+
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Kill")
 	void OnActorKilled(AActor* VictimActor, AActor* Killer);
@@ -32,7 +38,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UEnvQuery* SpawnBotQuery;
+
 	
+	/**
+	 * @brief AI Spawn Time Interval
+	 */
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float SpawnTimeInterval;
 
@@ -41,6 +51,19 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	TSubclassOf<AActor> MinionClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Respawn")
+	float PlayerRespawnTime;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Credits")
+	int32 KillCredits;
+
+	UPROPERTY()
+	USSaveGame* CurrentSaveGame;
+
+	FString SlotName;
+
+	bool bCanMove;
 
 	UFUNCTION()
 	void SpawnBot_TimeElapsed();
@@ -51,17 +74,14 @@ protected:
 	UFUNCTION()
 	void OnCompletedQuery(class UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
-	UPROPERTY(EditDefaultsOnly, Category = "Respawn")
-	float PlayerReSpawnTime;
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	void WriteSaveGame();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Credits")
-	int32 KillCredits;
+	void LoadSaveGame();
 
 	UFUNCTION(Exec)
 	void KillAll();
 
 	UFUNCTION(Exec)
 	void ToggleAIMove();
-	
-	bool bCanMove;
 };

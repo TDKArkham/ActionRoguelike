@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "SPlayerState.generated.h"
 
-class ASPlayerState;
+class USSaveGame;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditChange, ASPlayerState*, PlayerState, int32, NewCredit, int32, Delta);
 
@@ -26,11 +26,17 @@ public:
 	FOnCreditChange OnCreditChange;
 	
 	UFUNCTION(BlueprintCallable, Category = "Credits")
-	int32 GetCredits();
+	int32 GetCredits() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Credits")
 	void AddCredits(int32 Delta);
 
 	UFUNCTION(BlueprintCallable, Category = "Credits")
 	bool RemoveCredit(int32 Delta);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "SaveGame")
+	void SavePlayerState(USSaveGame* SaveObject);
+
+	UFUNCTION(BlueprintNativeEvent, Category = "SaveGame")
+	void LoadPlayerState(USSaveGame* SaveObject);
 };

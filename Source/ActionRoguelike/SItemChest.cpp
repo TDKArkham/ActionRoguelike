@@ -23,15 +23,20 @@ ASItemChest::ASItemChest()
 	SetReplicates(true);
 }
 
+void ASItemChest::OnActorLoaded_Implementation()
+{
+	OnRep_LidOpened();
+}
+
 void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
 	//ISGameplayInterface::Interact_Implementation(InstigatorPawn);
 	
 	bLidOpened = !bLidOpened;
-	OneRep_LidOpened();
+	OnRep_LidOpened();
 }
 
-void ASItemChest::OneRep_LidOpened()
+void ASItemChest::OnRep_LidOpened()
 {
 	float CurrentPitch = bLidOpened ? TargetPitch : 0.0f;
 	LidMesh->SetRelativeRotation(FRotator(CurrentPitch, 0.0f, 0.0f));
