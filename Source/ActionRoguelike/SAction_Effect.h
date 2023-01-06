@@ -33,4 +33,7 @@ protected:
 public:
 	virtual void StartAction_Implementation(AActor* TargetActor) override;
 	virtual void StopAction_Implementation(AActor* TargetActor) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Action")
+	float GetTimeRamaining() const;
 };

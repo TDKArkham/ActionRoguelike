@@ -41,6 +41,9 @@ protected:
 	FActionRepData RepData;
 	//bool bIsRunning;
 
+	UPROPERTY(Replicated)
+	float ActionStartTime;
+
 	UFUNCTION()
 	void OnRep_RepData();
 	
@@ -49,6 +52,9 @@ public:
 	void Initialize(USActionComponent* NewActionComponent);
 	
 	bool IsSupportedForNetworking() const override { return true; }
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UTexture2D* Icon;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	bool bAutoStart;
