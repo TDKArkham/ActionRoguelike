@@ -29,3 +29,7 @@ void ASPowerup_Action::Interact_Implementation(APawn* InstigatorPawn)
 	}
 }
 
+FText ASPowerup_Action::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	return FText::GetEmpty();
+}

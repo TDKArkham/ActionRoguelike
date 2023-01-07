@@ -7,6 +7,7 @@
 #include "SCharacter.h"
 #include "SPlayerState.h"
 
+#define LOCTEXT_NAMESPACE "PickableItems"
 
 // Sets default values
 ASHealthPotion::ASHealthPotion()
@@ -33,3 +34,16 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 		}
 	}
 }
+
+FText ASHealthPotion::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributeComponent(InstigatorPawn);
+	if (AttributeComp && AttributeComp->GetHealth() >= 100.0f)
+	{
+		return LOCTEXT("HealthPotion_FullHealthWarning", "Already at full health");
+	}
+	
+	return FText::Format(LOCTEXT("HealthPotion_InteractMessage", "Cost {0} Credits. Restores health {1}."), CreditCost, HealPower);
+}
+
+#undef LOCTEXT_NAMESPACE
