@@ -9,10 +9,13 @@
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "EngineUtils.h"
+#include "SActionComponent.h"
 #include "SCharacter.h"
 #include "SGameplayInterface.h"
+#include "SMonsterData.h"
 #include "SPlayerState.h"
 #include "SSaveGame.h"
+#include "Engine/AssetManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
@@ -103,11 +106,56 @@ void ASGameModeBase::OnCompletedQuery(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	}
 
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
-
 	if (Locations.Num() > 0)
 	{
-		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+		if (MonstersTable)
+		{
+			TArray<FMonsterInfoRow*> Rows;
+			MonstersTable->GetAllRows("", Rows);
+
+			int32 Index = FMath::RandRange(0, Rows.Num() - 1);
+			FMonsterInfoRow* Row = Rows[Index];
+
+			UAssetManager* Manager = UAssetManager::GetIfValid();
+			if (Manager)
+			{
+				TArray<FName> Bundles;
+
+				FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &ASGameModeBase::OnMonsterLoaded, Row->MonsterID, Locations[0]);
+
+				Manager->LoadPrimaryAsset(Row->MonsterID, Bundles, Delegate);
+			}
+
+
+		}
+
 	}
+}
+
+void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId AssetId, FVector SpawnLocation)
+{
+	UAssetManager* Manager = UAssetManager::GetIfValid();
+	if (Manager)
+	{
+		USMonsterData* MonsterData = Cast<USMonsterData>(Manager->GetPrimaryAssetObject(AssetId));
+		if (MonsterData)
+		{
+			AActor* NewBot = GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass, SpawnLocation, FRotator::ZeroRotator);
+			if (NewBot)
+			{
+				USActionComponent* ActionComponent = Cast<USActionComponent>(NewBot->GetComponentByClass(USActionComponent::StaticClass()));
+				if (ActionComponent)
+				{
+					for (TSubclassOf<USAction> Action : MonsterData->Actions)
+					{
+						ActionComponent->AddAction(NewBot, Action);
+					}
+				}
+			}
+		}
+	}
+
+
 }
 
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
@@ -158,7 +206,7 @@ void ASGameModeBase::WriteSaveGame()
 	for (FActorIterator it(GetWorld()); it; ++it)
 	{
 		AActor* Actor = *it;
-		if(!Actor->Implements<USGameplayInterface>())
+		if (!Actor->Implements<USGameplayInterface>())
 		{
 			continue;
 		}
@@ -210,7 +258,7 @@ void ASGameModeBase::LoadSaveGame()
 					Actor->SetActorTransform(ActorData.Transform);
 
 					FMemoryReader MemoryReader(ActorData.ByteData);
-					
+
 					FObjectAndNameAsStringProxyArchive Ar(MemoryReader, true);
 					// Only find variables that has "SaveGame" specifier in UPROPERTY() micro
 					Ar.ArIsSaveGame = true;
@@ -218,7 +266,7 @@ void ASGameModeBase::LoadSaveGame()
 					Actor->Serialize(Ar);
 
 					ISGameplayInterface::Execute_OnActorLoaded(Actor);
-					
+
 					break;
 				}
 			}
