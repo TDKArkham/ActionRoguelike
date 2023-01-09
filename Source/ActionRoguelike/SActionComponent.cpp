@@ -30,6 +30,22 @@ void USActionComponent::BeginPlay()
 	}
 }
 
+void USActionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	// The reason to use a copy: when we are iterating this array here, the stop action could remove actions from the array
+	// to prevent to iterate an array that might been changed (which can lead to crash problem), we choose to iterate the copy.
+	TArray<USAction*> ActionsCopy = Actions;
+	for (USAction* Action : ActionsCopy)
+	{
+		if (Action && Action->GetIsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
+}
+
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
